@@ -1,0 +1,46 @@
+  void aniadirElemento(){
+	
+	//Reservamos memoria para el nuevo elemento
+	nuevo = (struct ListaNumero*)malloc (sizeof(struct ListaNumero*));
+	if(nuevo==NULL) printf ("No hay memoria disponible\n");
+	printf("\nNuevo elemento:\n");
+	printf("Numero: ");
+    fflush(stdout);
+    scanf("%d",&nuevo->numero); //gets(nuevo->numero);
+    //El campo siguiente va a ser null por ser el ultimo elemento de la lista
+    nuevo->siguiente =NULL;
+    //ahora metemos el nuevo elemento en la lista y lo situamos al final de la lista
+    //comprobamos s i la lista esta vacia, si primero==null es que no hay ningun elemento
+    //tambien vale ultimo==null;
+    struct ListaNumero *aux;
+    if(primero==NULL){//si es el primero
+    	printf("Primer elemento\n");
+    	primero= nuevo;
+    	ultimo=nuevo;
+     }else 
+	  if( primero->siguiente == NULL  ){ //lista con 1 nodo
+      if(   primero->numero < nuevo->numero ){  //cuando se ingresa al final
+         primero->siguiente = nuevo;
+         nuevo->siguiente = NULL;
+      }
+      else{//cuando se ingresa al primero
+         nuevo->siguiente = primero;
+         primero = nuevo;
+      }
+   }
+   else{    //mas de 1 nodo
+      if( nuevo->numero < primero->numero ){ //si hay q insertar al principio
+         nuevo->siguiente = primero;
+         primero = nuevo;
+      }
+      else{//cuando esta entermedio 
+         aux = primero;
+         while( (aux->siguiente != NULL) && (aux->siguiente->numero<nuevo->numero)  ){
+            aux  = aux->siguiente;
+         }
+         nuevo->siguiente = aux->siguiente; //lo agrega despues de aux
+         aux->siguiente = nuevo;
+      }
+    }
+
+}
