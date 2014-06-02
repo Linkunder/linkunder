@@ -10,7 +10,6 @@ struct nodo *primero, *ultimo; //definir el primer y ultimo elemento de la lista
    void mostrar_menu();
    void aniadirElemento();
    void mostrarLista();
-   void borrarelemento(int numero,struct nodo *nuevo);
 int main(void){
 	int opcion=0;
 	primero=(struct nodo*)NULL; //primer elemento de la lista
@@ -27,11 +26,6 @@ int main(void){
 			case 1: aniadirElemento();
 			break;
 			case 2: printf("Ingrese numero a borrar \n");
-			int n=0;
-			scanf("%d",&n);
-			struct nodo *nuevo=primero;
-			borrarelemento(n, nuevo);
-			mostrarLista(nuevo);
 			break;
 			case 3: mostrarLista(primero);
 			break;
@@ -89,18 +83,4 @@ int main(void){
     	if(i==0) printf("\nLa lista esta vacia\n");
         }
         //insertar elemento al inicio  p->siguiente=inicio;  inicio=p;
-        void borrarelemento(int numero, struct nodo *nuevo){
-    	struct nodo *auxiliar;  // lo usamos para recorrer la lista
-		struct nodo *aux1;    
-    	int i=0;
-    	auxiliar= primero;
-    	nuevo=primero;
-    	while(nuevo!=NULL){
-    		if(numero==nuevo->numero){
-    			nuevo=nuevo->siguiente;		
-    		}
-    		nuevo= nuevo->siguiente;
-    		i++;
-    	}
-    	if(i==0) printf("\nLa lista esta vacia\n");
-    	}
+        
