@@ -1,0 +1,269 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <malloc.h>
+
+//estructuras
+
+typedef struct fecha{
+	int dia;
+	int mes;
+	int agno;
+}Fecha;
+
+typedef struct pJuridica{
+     char *ministerio;
+     char *nombre;
+     int personal;
+     int tipo;//  2 para privada 1 para estatal con esto vemos si es persona juridica estatal o privada  
+	 int incentivo;
+}PJuridica;
+
+typedef struct pNatural{
+	//aqui no se jajaj como no da especificaciones
+	int si;
+}PNatural;
+
+typedef struct beneficiario{
+	char *nombre;
+	int rut;
+	int codigoVerificador;
+	int jn;
+	PJuridica juridica;
+	PNatural natural;
+}Beneficiario;
+
+typedef struct proyecto{
+	char nombre[20];
+	char *tipoConstruccion;
+	Fecha inicio;
+	Fecha fin;
+	Fecha ingreso;
+	int presupuesto;
+	Beneficiario benefi;	
+	struct proyecto *siguiente;//puntero hacia el siguiente de la lista de proyectos
+}Proyecto;
+// punteros para la lista proyecto
+Proyecto *primero, *nuevo, *ultimo;
+
+
+
+//funciones 
+void agregarProyecto();
+void eliminarProyecto();
+void mostrarProyectos();
+void pideFecha(Fecha fechaRequerida);
+void buscaBeneficiario();
+void pideBeneficiario(Beneficiario b);
+int main(void){
+    
+	
+	srand(time(NULL));
+	int opcion;
+	Fecha fechaRequerida;
+	primero=(Proyecto*)NULL;
+	ultimo=(Proyecto*)NULL;
+	do{
+		printf("\n===============================================\n");
+		printf("\n Menu:\n =====\n\n");
+    	printf("1.- Agregar   Proyecto\n");
+    	printf("2.- Eliminar  Proyecto\n");
+    	printf("3.- Modificar Proyecto\n");
+    	printf("4.- Mostrar   Proyectos\n");
+    	printf("5.- Mostrar proyectos antes de fecha ingresada\n");
+    	printf("6.- Mostrar proyectos activos a la fecha\n");
+    	printf("7.- Mostar Datos del beneficiario\n");
+    	printf("8.- Salir\n\n");
+    	printf("Escoge una opcion: ");
+    	scanf("%d",&opcion);
+    	printf("\n===============================================\n\n");
+    	switch(opcion){
+    		case 1: agregarProyecto();
+    				break;
+    				
+    		case 2: eliminarProyecto();
+    				break;
+    				
+    		case 3:	
+    		        //Aqui podriamos preguntar que se desea modificar y modificarlo directamente aunque debemos preguntar que proyecto
+    				break;
+    				
+    		case 4:
+    			   mostrarProyectos();
+    				break;
+    				
+    		case 5:
+    			   pideFecha(fechaRequerida);
+    
+    				break;
+    				
+    		case 6:
+    				break;
+    				
+    		case 7:
+    		     	buscaBeneficiario();
+    				break;
+    				
+    		case 8: printf("\nAdios \n||Constructora Alto Rio||");
+			     	exit(1);
+    				default: printf("Opcion no valida\n");
+    				break;
+    	}
+	}while(opcion != 8);
+	 
+	
+	return 0;
+}
+
+void agregarProyecto(){
+	//Nuevo proyecto
+     nuevo= (Proyecto*)malloc(sizeof(Proyecto));
+    //Llenamos el proyect
+
+    //Llenamos el proyect 
+    int auxi;
+    nuevo->ingreso.dia=(rand()%29)+1; 
+    nuevo->ingreso.mes=(rand()%11)+1; 
+    nuevo->ingreso.agno=(rand()%40)+2014;
+    auxi=nuevo->ingreso.agno;
+    nuevo->inicio.dia=nuevo->ingreso.dia+1; 
+    nuevo->inicio.mes=nuevo->ingreso.mes+1; 
+    nuevo->inicio.agno=((rand()%2)+1)+auxi;
+    auxi=nuevo->inicio.agno;
+	nuevo->fin.dia=(rand()%29)+1;
+	nuevo->fin.mes=(rand()%11)+1;
+	nuevo->fin.agno=(rand()%3)+1+auxi;
+    nuevo->presupuesto=(rand()%9999)+99999;
+    //////////////////////////////////////////////////////////////
+			srand(time(NULL));
+			int contador=0, numRand= rand()%4;
+			char caracteres[100], *s;
+			FILE *lectura;
+			lectura = fopen ("tipoConstruccion.txt", "r"); //a+
+	
+			while (contador<numRand){
+ 				fgets(caracteres,100,lectura);
+ 				contador++;
+ 			}
+ 			s=fgets(caracteres,100,lectura);
+ 	////////////////////////////////////////////////////////       
+    nuevo->tipoConstruccion=s;
+    printf("%s", nuevo->tipoConstruccion);
+	pideBeneficiario(nuevo->benefi);
+	
+	nuevo->siguiente=NULL;
+	Proyecto *aux;
+    if(primero==NULL){
+    	printf("\nPrimer proyecto\n");
+    	primero= nuevo;
+    	ultimo=nuevo;
+    }else{
+    	//el que esta ahora era el ultimo y tiene que apuntar al nuevo
+    	ultimo->siguiente=nuevo;
+    	//hacemos que el nuevo sea ahora el ultimo
+    	ultimo = nuevo;
+	}
+	
+}
+void eliminarProyecto(){
+	
+}
+void mostrarProyectos(){
+	   
+    	Proyecto *auxiliar; // lo usamos para recorrer la lista
+    	int i=0;
+    	auxiliar= primero;
+    	printf("\nMostrando la lista de Proyectos:\n");
+    	while(auxiliar!=NULL){
+    		printf("\nNombre del proyecto: %s\n",auxiliar->nombre);
+    		printf("\nfecha de ingreso : %d/%d/%d\n",auxiliar->ingreso.dia,auxiliar->ingreso.mes,auxiliar->ingreso.agno);
+    		printf("\nfecha inicio : %d/%d/%d \n",auxiliar->inicio.dia,auxiliar->inicio.mes,auxiliar->inicio.agno);
+    		printf("\nfecha termino : %d/%d/%d\n",auxiliar->fin.dia,auxiliar->fin.mes,auxiliar->fin.agno);
+    		printf("\nPlazo de desarrollo :\n");
+    		printf("\nPresupuesto : %d\n",auxiliar->presupuesto);
+    		printf("\nTipo de construccion %s:\n",auxiliar->tipoConstruccion);
+    		printf("\nBeneficiario : %s\n",auxiliar->benefi.nombre);
+    		
+    		auxiliar= auxiliar->siguiente;
+    		i++;
+    	}
+    	if(i==0) printf("\nLa lista esta vacia\n");
+    	
+}
+
+void pideBeneficiario(Beneficiario b){
+
+	//////////////////////////////
+	srand(time(NULL));
+	int contador=0, numRand= rand()%14;
+	char caracteres[100], *p;
+	FILE *lectura;
+	lectura = fopen ("nombres.txt", "r"); //a+
+	
+	while (contador<numRand){
+ 		fgets(caracteres,100,lectura);
+ 		contador++;
+ 	}
+ 	p=fgets(caracteres,100,lectura);
+ 	//////////////////////////////
+	b.nombre = p;
+	b.rut=(rand()%99999)+18934723;
+    b.codigoVerificador=(rand()%9);
+    b.jn=(rand()%2)+1;
+
+	if(b.jn==1){//ESTATAL
+		b.juridica.tipo=(rand()%2)+1;
+		if(b.juridica.tipo==1){
+		b.juridica.tipo=1;
+        b.juridica.personal=(rand()%200)+200;
+        //////////////////////////////////////////////////////////////
+			srand(time(NULL));
+			int contador=0, numRand= rand()%22;
+			char caracteres[100], *q;
+			FILE *lectura;
+			lectura = fopen ("ministerios.txt", "r"); //a+
+	
+			while (contador<numRand){
+ 				fgets(caracteres,100,lectura);
+ 				contador++;
+ 			}
+ 			q=fgets(caracteres,100,lectura);
+ 		////////////////////////////////////////////////////////       
+ 		b.juridica.ministerio=q;
+        
+			
+		}else{
+				//////////////////////////////
+				srand(time(NULL));
+				int contador=0, numRand= rand()%14;
+				char caracteres[100], *t;
+				FILE *lectura;
+				lectura = fopen ("nombres.txt", "r"); //a+
+	
+				while (contador<numRand){
+ 					fgets(caracteres,100,lectura);
+ 					contador++;
+ 				}
+ 				t=fgets(caracteres,100,lectura);
+ 				//////////////////////////////
+ 				b.juridica.nombre=t;
+		    	b.juridica.personal=(rand()%200)+200;
+		    	b.juridica.incentivo=(rand()%2)+1;
+		}
+	
+}
+}
+void pideFecha(Fecha fechaRequerida){
+    fechaRequerida.dia=(rand()%29)+1; 
+    fechaRequerida.mes=(rand()%11)+1; 
+	fechaRequerida.agno=(rand()%40)+1980; 
+
+}
+void buscaBeneficiario(){
+	char nombre[20];
+	printf("\nIngrese nombre del beneficiario\n%c",26);
+	scanf("%s",&nombre);
+	
+	//aqui tenemos que buscar al beneficiario y comparar con el nombre obtenido
+	
+}
